@@ -1,0 +1,33 @@
+# Ignore Python cache and virtualenv
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+env
+
+
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled files
+*.log
+*.pot
+*.pyc
+
+# Ignore media or static files (optional if using external storage)
+media/
+staticfiles/
