@@ -48,7 +48,10 @@ DEFAULT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'corsheaders', 
 ]
 
 LOCAL_APPS = [
@@ -140,3 +143,39 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# REST Framework Settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication', 
+    ),
+}
+
+# Djoser Settings (Email Verification & Password Reset)
+DJOSER = {
+    'USER_ID_FIELD': 'email', 
+    'LOGIN_FIELD': 'email',
+    'SEND_ACTIVATION_EMAIL': True, 
+    'ACTIVATION_URL': 'activate/{uid}/{token}',  
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/{uid}/{token}', 
+    'USER_CREATE_PASSWORD_RETYPE': True, 
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',  
+        'user': 'users.serializers.UserSerializer',  
+        'current_user': 'users.serializers.UserSerializer',
+    },
+}
+
+
+# Email Configuration
+
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+AUTH_USER_MODEL = 'users.CustomUser'
