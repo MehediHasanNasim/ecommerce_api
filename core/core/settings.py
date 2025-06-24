@@ -52,6 +52,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'corsheaders', 
+    'django_filters',
 ]
 
 LOCAL_APPS = [
