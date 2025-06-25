@@ -78,3 +78,26 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} - {self.user.email}"
+    
+
+class Review(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    rating = models.PositiveSmallIntegerField(
+        choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    )
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Review for {self.product.name} by {self.user.email}"

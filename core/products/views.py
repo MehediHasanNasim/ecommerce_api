@@ -1,19 +1,22 @@
-from rest_framework import generics, filters, status
+from rest_framework import generics, filters, status, permissions
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Product, Category, Cart, CartItem, Order
-from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartItemSerializer, OrderSerializer
+from .models import Product, Category, Cart, CartItem, Order, Review
+from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartItemSerializer, OrderSerializer, ReviewSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from rest_framework.decorators import api_view
 
 import stripe
 import json
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+from .utils import scrape_books
 
 class StandardResultsPagination(PageNumberPagination):
     page_size = 10
@@ -31,7 +34,6 @@ class ProductListView(generics.ListAPIView):
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
 
 
 
@@ -120,3 +122,29 @@ def stripe_webhook(request):
         CartItem.objects.filter(cart_id=cart_id).delete()
 
     return HttpResponse(status=200)
+
+
+
+class ReviewCreateView(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class ProductReviewsView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+        return Review.objects.filter(product_id=product_id)
+
+@api_view(['GET'])
+def scrape_books_view(request):
+    try:
+        books = scrape_books()
+        return Response(books)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+    
