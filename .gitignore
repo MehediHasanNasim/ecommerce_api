@@ -31,3 +31,7 @@ Thumbs.db
 # Ignore media or static files (optional if using external storage)
 media/
 staticfiles/
+
+*.mp4
+*.jpg
+*.png
